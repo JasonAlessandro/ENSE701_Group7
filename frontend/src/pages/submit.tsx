@@ -18,6 +18,7 @@ const Submit = () => {
     published_date: '',
     publisher: '',
   });
+  const [message, setMessage] = useState<string | null>(null); // State for message
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -29,10 +30,10 @@ const Submit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Log the form data being sent to the backend
     console.log('Form Data being sent:', formData);
-  
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books`, {
         method: 'POST',
@@ -41,76 +42,97 @@ const Submit = () => {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const data = await response.json();
       console.log('Success:', data);
-      // Optionally reset form or navigate to another page
+      
+      // Show success message
+      setMessage('Article sent');
+      // Optionally reset the form
+      setFormData({
+        title: '',
+        isbn: '',
+        author: '',
+        description: '',
+        published_date: '',
+        publisher: '',
+      });
+      
+      // Hide message after 3 seconds
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
+      
     } catch (error) {
       console.error('Error submitting form:', error);
     }
   };
-  
+
   return (
-    <form onSubmit={handleSubmit}>
-      <label>Title:</label>
-      <input
-        name="title"
-        value={formData.title}
-        onChange={handleChange}
-        required
-      />
-      <br />
-      
-      <label>ISBN:</label>
-      <input
-        name="isbn"
-        value={formData.isbn}
-        onChange={handleChange}
-        required
-      />
-      <br />
+    <div>
+      <form onSubmit={handleSubmit}>
+        <label>Title:</label>
+        <input
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          required
+        />
+        <br />
 
-      <label>Author:</label>
-      <input
-        name="author"
-        value={formData.author}
-        onChange={handleChange}
-        required
-      />
-      <br />
+        <label>ISBN:</label>
+        <input
+          name="isbn"
+          value={formData.isbn}
+          onChange={handleChange}
+          required
+        />
+        <br />
 
-      <label>Description:</label>
-      <input
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-      />
-      <br />
+        <label>Author:</label>
+        <input
+          name="author"
+          value={formData.author}
+          onChange={handleChange}
+          required
+        />
+        <br />
 
-      <label>Published Date:</label>
-      <input
-        type="date"
-        name="published_date"
-        value={formData.published_date}
-        onChange={handleChange}
-        required
-      />
-      <br />
+        <label>Description:</label>
+        <input
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+        />
+        <br />
 
-      <label>Publisher:</label>
-      <input
-        name="publisher"
-        value={formData.publisher}
-        onChange={handleChange}
-      />
-      <br />
+        <label>Published Date:</label>
+        <input
+          type="date"
+          name="published_date"
+          value={formData.published_date}
+          onChange={handleChange}
+          required
+        />
+        <br />
 
-      <button type="submit">Submit</button>
-    </form>
+        <label>Publisher:</label>
+        <input
+          name="publisher"
+          value={formData.publisher}
+          onChange={handleChange}
+        />
+        <br />
+
+        <button type="submit">Submit</button>
+      </form>
+
+      {message && <div style={{ color: 'green' }}>{message}</div>} {/* Display message */}
+    </div>
   );
 };
 
