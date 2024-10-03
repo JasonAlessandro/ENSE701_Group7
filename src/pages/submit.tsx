@@ -29,7 +29,6 @@ const Submit = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Form submitted', formData);
-    // Add API call logic here
   };
 
   return (

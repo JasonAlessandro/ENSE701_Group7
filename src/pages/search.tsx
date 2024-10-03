@@ -7,7 +7,6 @@ const Search = () => {
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Searching for:', searchQuery);
-    // Add API call logic here to fetch search results
   };
 
   return (
@@ -18,10 +17,10 @@ const Search = () => {
         <input
           value={searchQuery}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+          placeholder="Enter search term..."
         />
         <button type="submit">Search</button>
       </form>
-      {/* Display search results here */}
     </div>
   );
 };

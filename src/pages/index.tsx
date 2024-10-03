@@ -21,7 +21,7 @@ const Home: FC = () => {
             <Link href="/search">Search Database</Link>
           </li>
         </ul>
-      </nav>
+      </nav>  
     </div>
   );
 };

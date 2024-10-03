@@ -1,7 +1,4 @@
-// src/pages/moderation.tsx
-import { FC } from 'react';
-
-const Moderation: FC = () => {
+const Moderation = () => {
   return (
     <div>
       <h1>Moderation</h1>
