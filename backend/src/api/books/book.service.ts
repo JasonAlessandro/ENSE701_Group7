@@ -1,28 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { Book } from './book.schema';
+import { CreateBookDto } from './create-book.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateBookDto } from './create-book.dto';
+import { Book } from './book.schema';
+
 @Injectable()
 export class BookService {
-constructor(@InjectModel(Book.name) private bookModel: Model<Book>) {}
-test(): string {
-return 'book route testing';
-}
-async findAll(): Promise<Book[]> {
-return await this.bookModel.find().exec();
-}
-async findOne(id: string): Promise<Book> {
-    return await this.bookModel.findById(id).exec();
-    }
+    constructor(@InjectModel(Book.name) private bookModel: Model<Book>) {}
+
     async create(createBookDto: CreateBookDto) {
-    return await this.bookModel.create(createBookDto);
+        const newBook = new this.bookModel({ ...createBookDto, moderation: 'pending' });
+        return await newBook.save();
     }
-    async update(id: string, createBookDto: CreateBookDto) {
-    return await this.bookModel.findByIdAndUpdate(id, createBookDto).exec();
+
+    async findAll() {
+        return this.bookModel.find({ moderation: 'accepted' });
     }
-    async delete(id: string) {
-    const deletedBook = await this.bookModel.findByIdAndDelete(id).exec();
-    return deletedBook;
+
+    async findPending() {
+        return this.bookModel.find({ moderation: 'pending' });
     }
+
+    async update(id: string, updateDto: Partial<CreateBookDto>) {
+        const book = await this.bookModel.findById(id);
+        if (book) {
+            Object.assign(book, updateDto);
+            return await book.save();
+        }
+        throw new Error('Book not found');
     }
+
+    async accept(id: string) {
+        const book = await this.bookModel.findById(id);
+        if (book) {
+            book.moderation = 'accepted';
+            return await book.save();
+        }
+        throw new Error('Book not found');
+    }
+
+    async reject(id: string) {
+        const book = await this.bookModel.findByIdAndDelete(id);
+        if (!book) {
+            throw new Error('Book not found');
+        }
+    }
+}
