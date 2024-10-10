@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Delete, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Delete,
+    HttpException,
+    HttpStatus,
+    Param,
+    Post,
+    Put,
+} from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './create-book.dto';
 
@@ -25,12 +35,12 @@ export class BookController {
 
     @Get('/')
     async findAcceptedBooks() {
-        return this.bookService.findAll();
+        return this.bookService.findAll(); // This will return only accepted books
     }
 
     @Get('/pending')
     async findPendingBooks() {
-        return this.bookService.findPending();
+        return this.bookService.findPending(); // This will return only pending books
     }
 
     @Put(':id')
@@ -70,8 +80,8 @@ export class BookController {
     @Delete(':id/reject')
     async rejectBook(@Param('id') id: string) {
         try {
-            await this.bookService.reject(id);
-            return { message: 'Book rejected successfully' };
+            const response = await this.bookService.reject(id);
+            return response;
         } catch (error) {
             throw new HttpException(
                 {

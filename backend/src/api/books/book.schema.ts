@@ -5,29 +5,29 @@ export type BookDocument = HydratedDocument<Book>;
 
 @Schema()
 export class Book {
-  @Prop({ required: true })
-  title: string;
+    @Prop({ required: true })
+    title: string;
 
-  @Prop({ required: true })
-  isbn: string;
+    @Prop({ required: true })
+    isbn: string;
 
-  @Prop({ required: true })
-  author: string;
+    @Prop({ required: true })
+    author: string;
 
-  @Prop()
-  description: string;
+    @Prop()
+    description: string;
 
-  @Prop({ type: Date })
-  published_date: Date;
+    @Prop({ type: Date })
+    published_date: Date;
 
-  @Prop()
-  publisher: string;
+    @Prop()
+    publisher: string;
 
-  @Prop({ type: Date, default: Date.now })
-  updated_date: Date;
+    @Prop({ type: Date, default: Date.now })
+    updated_date: Date;
 
-  @Prop({ default: 'pending' })
-  moderation: 'pending' | 'accepted' | 'rejected';
+    @Prop({ default: 'pending' })
+    moderation: 'pending' | 'accepted' | 'rejected';  // Track moderation status
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);
