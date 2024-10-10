@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 
 interface FormData {
   title: string;
-  isbn: string; // Adding ISBN field
+  isbn: string;
   author: string;
   description: string;
-  published_date: string; // Use a string for date input
+  published_date: string;
   publisher: string;
 }
 
@@ -18,9 +18,9 @@ const Submit = () => {
     published_date: '',
     publisher: '',
   });
-  const [message, setMessage] = useState<string | null>(null); // State for message
+  const [message, setMessage] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -30,9 +30,6 @@ const Submit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Log the form data being sent to the backend
-    console.log('Form Data being sent:', formData);
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books`, {
@@ -49,10 +46,8 @@ const Submit = () => {
 
       const data = await response.json();
       console.log('Success:', data);
-      
-      // Show success message
-      setMessage('Article sent');
-      // Optionally reset the form
+
+      setMessage('Article sent for moderation.');
       setFormData({
         title: '',
         isbn: '',
@@ -61,12 +56,10 @@ const Submit = () => {
         published_date: '',
         publisher: '',
       });
-      
-      // Hide message after 3 seconds
+
       setTimeout(() => {
         setMessage(null);
       }, 3000);
-      
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -76,62 +69,26 @@ const Submit = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <label>Title:</label>
-        <input
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
+        <input name="title" value={formData.title} onChange={handleChange} required />
         <br />
-
         <label>ISBN:</label>
-        <input
-          name="isbn"
-          value={formData.isbn}
-          onChange={handleChange}
-          required
-        />
+        <input name="isbn" value={formData.isbn} onChange={handleChange} required />
         <br />
-
         <label>Author:</label>
-        <input
-          name="author"
-          value={formData.author}
-          onChange={handleChange}
-          required
-        />
+        <input name="author" value={formData.author} onChange={handleChange} required />
         <br />
-
         <label>Description:</label>
-        <input
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
+        <input name="description" value={formData.description} onChange={handleChange} />
         <br />
-
         <label>Published Date:</label>
-        <input
-          type="date"
-          name="published_date"
-          value={formData.published_date}
-          onChange={handleChange}
-          required
-        />
+        <input type="date" name="published_date" value={formData.published_date} onChange={handleChange} required />
         <br />
-
         <label>Publisher:</label>
-        <input
-          name="publisher"
-          value={formData.publisher}
-          onChange={handleChange}
-        />
+        <input name="publisher" value={formData.publisher} onChange={handleChange} required />
         <br />
-
         <button type="submit">Submit</button>
       </form>
-
-      {message && <div style={{ color: 'green' }}>{message}</div>} {/* Display message */}
+      {message && <p>{message}</p>}
     </div>
   );
 };

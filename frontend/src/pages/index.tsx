@@ -22,10 +22,9 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
-  // Ensure dropdown logic only happens on the client side
   useEffect(() => {
     setIsClient(true);
-    sortArticles("published_date"); // Sort by published_date on page load
+    sortArticles("published_date");
   }, []);
 
   const toggleDropdown = () => {
@@ -34,13 +33,11 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
 
   const sortArticles = (field: keyof Article) => {
     const isSameField = sortField === field;
-    
-    // Update sort field and toggle direction if it's the same field
     setSortField(field);
     if (isSameField) {
       setIsAscending(!isAscending);
     } else {
-      setIsAscending(true); // Default to ascending for a new field
+      setIsAscending(true);
     }
 
     const sortedArticles = [...articles].sort((a, b) => {
@@ -62,7 +59,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
 
   const getSortArrow = (field: keyof Article) => {
     if (sortField === field) {
-      return isAscending ? "↑" : "↓"; // Show appropriate arrow based on sorting order
+      return isAscending ? "↑" : "↓";
     }
     return "";
   };
@@ -71,35 +68,28 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
     <div>
       <h1>Welcome to the Software Empirical Evidence Database (SPEED)</h1>
 
-      <div
-        style={{
-          position: "relative",
-          display: "inline-block",
-          float: "right",
-        }}
-      >
+      <div style={{ position: "relative", display: "inline-block", float: "right" }}>
         <div style={menuBoxStyle}>
           <button onClick={toggleDropdown} style={dropdownButtonStyle}>
             Menu
           </button>
         </div>
-        {isClient &&
-          isDropdownOpen && ( // Ensure dropdown renders only on the client
-            <div style={dropdownStyle}>
-              <Link href="/submit" style={dropdownItemStyle}>
-                Submit an Article
-              </Link>
-              <Link href="/moderation" style={dropdownItemStyle}>
-                Moderation
-              </Link>
-              <Link href="/analysis" style={dropdownItemStyle}>
-                Analysis
-              </Link>
-              <Link href="/search" style={dropdownItemStyle}>
-                Search Database
-              </Link>
-            </div>
-          )}
+        {isClient && isDropdownOpen && (
+          <div style={dropdownStyle}>
+            <Link href="/submit" style={dropdownItemStyle}>
+              Submit an Article
+            </Link>
+            <Link href="/moderation" style={dropdownItemStyle}>
+              Moderation
+            </Link>
+            <Link href="/analysis" style={dropdownItemStyle}>
+              Analysis
+            </Link>
+            <Link href="/search" style={dropdownItemStyle}>
+              Search Database
+            </Link>
+          </div>
+        )}
       </div>
 
       <h2>Submitted Articles</h2>
@@ -111,47 +101,32 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
             <tr>
               <th>
                 Title
-                <button
-                  onClick={() => sortArticles("title")}
-                  style={sortButtonStyle}
-                >
+                <button onClick={() => sortArticles("title")} style={sortButtonStyle}>
                   Sort {getSortArrow("title")}
                 </button>
               </th>
               <th>
                 Author
-                <button
-                  onClick={() => sortArticles("author")}
-                  style={sortButtonStyle}
-                >
+                <button onClick={() => sortArticles("author")} style={sortButtonStyle}>
                   Sort {getSortArrow("author")}
                 </button>
               </th>
               <th>
                 ISBN
-                <button
-                  onClick={() => sortArticles("isbn")}
-                  style={sortButtonStyle}
-                >
+                <button onClick={() => sortArticles("isbn")} style={sortButtonStyle}>
                   Sort {getSortArrow("isbn")}
                 </button>
               </th>
               <th>Description</th>
               <th>
                 Published Date
-                <button
-                  onClick={() => sortArticles("published_date")}
-                  style={sortButtonStyle}
-                >
+                <button onClick={() => sortArticles("published_date")} style={sortButtonStyle}>
                   Sort {getSortArrow("published_date")}
                 </button>
               </th>
               <th>
                 Publisher
-                <button
-                  onClick={() => sortArticles("publisher")}
-                  style={sortButtonStyle}
-                >
+                <button onClick={() => sortArticles("publisher")} style={sortButtonStyle}>
                   Sort {getSortArrow("publisher")}
                 </button>
               </th>
@@ -164,10 +139,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
                 <td>{article.author}</td>
                 <td>{article.isbn}</td>
                 <td>{article.description}</td>
-                {/* Fix date formatting to ensure consistency */}
-                <td>
-                  {new Date(article.published_date).toLocaleDateString("en-US")}
-                </td>
+                <td>{new Date(article.published_date).toLocaleDateString("en-US")}</td>
                 <td>{article.publisher}</td>
               </tr>
             ))}
@@ -202,9 +174,7 @@ export const getServerSideProps = async () => {
   let articles = [];
 
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books`
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books`);
     if (!response.ok) {
       throw new Error("Failed to fetch articles");
     }
@@ -251,11 +221,11 @@ const menuBoxStyle: React.CSSProperties = {
 
 const sortButtonStyle: React.CSSProperties = {
   marginLeft: '10px',
-  backgroundColor: '#2e7d32',  // Dark green background
+  backgroundColor: '#2e7d32',
   border: 'none',
   cursor: 'pointer',
   padding: '5px',
-  color: 'white',  // Optional: Set text color to white for better contrast
+  color: 'white',
 };
 
 export default Home;
