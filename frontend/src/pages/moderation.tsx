@@ -73,38 +73,41 @@ const Moderation: FC = () => {
 
   return (
     <div>
-      <h1>Moderation Page</h1>
+      <h1>Moderation Panel</h1>
       {message && <p>{message}</p>}
-      <h2>Pending Books</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>ISBN</th>
-            <th>Author</th>
-            <th>Description</th>
-            <th>Published Date</th>
-            <th>Publisher</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pendingBooks.map((book) => (
-            <tr key={book._id}>
-              <td>{book.title}</td>
-              <td>{book.isbn}</td>
-              <td>{book.author}</td>
-              <td>{book.description}</td>
-              <td>{new Date(book.published_date).toLocaleDateString()}</td>
-              <td>{book.publisher}</td>
-              <td>
-                <button onClick={() => handleAccept(book._id)}>Accept</button>
-                <button onClick={() => handleReject(book._id)}>Reject</button>
-              </td>
+      {pendingBooks.length === 0 ? (
+        <p>No books pending moderation.</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Author</th>
+              <th>ISBN</th>
+              <th>Description</th>
+              <th>Published Date</th>
+              <th>Publisher</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {pendingBooks.map((book) => (
+              <tr key={book._id}>
+                <td>{book.title}</td>
+                <td>{book.author}</td>
+                <td>{book.isbn}</td>
+                <td>{book.description}</td>
+                <td>{new Date(book.published_date).toLocaleDateString("en-US")}</td>
+                <td>{book.publisher}</td>
+                <td>
+                  <button onClick={() => handleAccept(book._id)}>Accept</button>
+                  <button onClick={() => handleReject(book._id)}>Reject</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

@@ -19,7 +19,7 @@ export class BookController {
     @Post('/')
     async addBook(@Body() createBookDto: CreateBookDto) {
         try {
-            await this.bookService.create({ ...createBookDto, status: 'pending' });
+            await this.bookService.create({ ...createBookDto, moderation: 'pending' });
             return { message: 'Book submitted for moderation' };
         } catch (error) {
             throw new HttpException(
@@ -35,12 +35,12 @@ export class BookController {
 
     @Get('/')
     async findAcceptedBooks() {
-        return this.bookService.findAll(); // This will return only accepted books
+        return this.bookService.findAll(); // Return only accepted books
     }
 
     @Get('/pending')
     async findPendingBooks() {
-        return this.bookService.findPending(); // This will return only pending books
+        return this.bookService.findPending(); // Return only pending books
     }
 
     @Put(':id')
@@ -80,8 +80,8 @@ export class BookController {
     @Delete(':id/reject')
     async rejectBook(@Param('id') id: string) {
         try {
-            const response = await this.bookService.reject(id);
-            return response;
+            await this.bookService.reject(id);
+            return { message: 'Book rejected successfully' };
         } catch (error) {
             throw new HttpException(
                 {

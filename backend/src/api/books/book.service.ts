@@ -1,46 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './create-book.dto';
+import { Book } from './book.schema';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class BookService {
-    private books = []; // Simulating a database
+    constructor(@InjectModel(Book.name) private bookModel: Model<Book>) {}
 
     async create(createBookDto: CreateBookDto) {
-        const newBook = { ...createBookDto, id: Date.now().toString(), moderation: 'pending' };
-        this.books.push(newBook);
-        return newBook;
+        const newBook = new this.bookModel(createBookDto);
+        return await newBook.save();
     }
     
     async findAll() {
-        return this.books.filter(book => book.moderation === 'accepted'); // Return only accepted books
+        return this.bookModel.find({ moderation: 'accepted' }).exec(); // Return only accepted books
     }
     
     async findPending() {
-        return this.books.filter(book => book.moderation === 'pending'); // Return only pending books
+        return this.bookModel.find({ moderation: 'pending' }).exec(); // Return only pending books
     }
 
     async update(id: string, updateDto: Partial<CreateBookDto>) {
-        const book = this.books.find(book => book.id === id);
-        if (book) {
-            Object.assign(book, updateDto); // Update the book properties
-            return book;
+        const updatedBook = await this.bookModel.findByIdAndUpdate(id, updateDto, { new: true });
+        if (!updatedBook) {
+            throw new Error('Book not found');
         }
-        throw new Error('Book not found');
+        return updatedBook;
     }
 
     async accept(id: string) {
-        const book = this.books.find(book => book.id === id);
-        if (book) {
-            book.moderation = 'accepted'; // Update moderation status
-            return book;
+        const updatedBook = await this.bookModel.findByIdAndUpdate(id, { moderation: 'accepted' }, { new: true });
+        if (!updatedBook) {
+            throw new Error('Book not found');
         }
-        throw new Error('Book not found');
+        return updatedBook;
     }
     
     async reject(id: string) {
-        const index = this.books.findIndex(book => book.id === id);
-        if (index > -1) {
-            this.books.splice(index, 1);
+        const deletedBook = await this.bookModel.findByIdAndDelete(id);
+        if (!deletedBook) {
+            throw new Error('Book not found');
         }
     }
 }
