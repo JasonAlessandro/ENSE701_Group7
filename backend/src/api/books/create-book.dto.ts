@@ -6,5 +6,5 @@ export class CreateBookDto {
     published_date: Date;
     publisher: string;
     updated_date?: Date; // Make sure this field is optional in your DTO if you're not sending it
-    status?: 'pending' | 'accepted' | 'rejected'; // Track moderation status
+    moderation?: 'pending' | 'accepted' | 'rejected'; // Track moderation status
 }

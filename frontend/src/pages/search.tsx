@@ -54,7 +54,7 @@ const Search = () => {
                 <td>{article.author}</td>
                 <td>{article.isbn}</td>
                 <td>{article.description}</td>
-                <td>{new Date(article.published_date).toLocaleDateString()}</td>
+                <td>{new Date(article.published_date).toLocaleDateString("en-US")}</td>
                 <td>{article.publisher}</td>
               </tr>
             ))}
