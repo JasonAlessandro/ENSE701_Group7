@@ -14,11 +14,11 @@ export class BookService {
     }
     
     async findAll() {
-        return this.bookModel.find({ moderation: 'accepted' }).exec(); // Return only accepted books
+        return this.bookModel.find({ moderation: 'accepted' }).exec(); 
     }
     
     async findPending() {
-        return this.bookModel.find({ moderation: 'pending' }).exec(); // Return only pending books
+        return this.bookModel.find({ moderation: 'pending' }).exec(); 
     }
 
     async update(id: string, updateDto: Partial<CreateBookDto>) {
@@ -40,7 +40,7 @@ export class BookService {
     async reject(id: string) {
         const deletedBook = await this.bookModel.findByIdAndDelete(id);
         if (!deletedBook) {
-            throw new Error('Book not found');
+            throw new Error('Article not found');
         }
     }
 }

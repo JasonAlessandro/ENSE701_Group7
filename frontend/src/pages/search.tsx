@@ -20,7 +20,7 @@ const Search = () => {
   }, []);
 
   useEffect(() => {
-    // Retrieve saved search queries from localStorage when the component mounts
+    
     const storedQueries = localStorage.getItem('savedQueries');
     if (storedQueries) {
       setSavedQueries(JSON.parse(storedQueries));
@@ -35,7 +35,7 @@ const Search = () => {
     if (searchTerm && !savedQueries.includes(searchTerm)) {
       const updatedQueries = [...savedQueries, searchTerm];
       setSavedQueries(updatedQueries);
-      // Save the updated queries to localStorage
+      
       localStorage.setItem('savedQueries', JSON.stringify(updatedQueries));
     }
   };
@@ -46,7 +46,7 @@ const Search = () => {
   };
 
   const handleQueryClick = (query: string) => {
-    setSearchTerm(query); // Set the search term to the clicked query
+    setSearchTerm(query); 
   };
 
   const filteredArticles = articles.filter(
