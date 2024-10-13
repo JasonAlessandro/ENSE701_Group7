@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import { useNotification } from '../Notification';
 
 interface Book {
   _id: string;
@@ -13,7 +14,7 @@ interface Book {
 
 const Moderation: FC = () => {
   const [pendingBooks, setPendingBooks] = useState<Book[]>([]);
-  const [message, setMessage] = useState("");
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     fetchPendingBooks();
@@ -23,13 +24,13 @@ const Moderation: FC = () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/pending`);
       if (!response.ok) {
-        throw new Error("Failed to fetch pending books");
+        throw new Error("Failed to fetch pending Articles");
       }
       const data = await response.json();
       setPendingBooks(data);
     } catch (error) {
-      console.error("Error fetching pending books:", error);
-      setMessage("Error fetching pending books. Please try again.");
+      console.error("Error fetching pending Articles:", error);
+      addNotification("Error fetching pending Articles. Please try again."); 
     }
   };
 
@@ -40,14 +41,14 @@ const Moderation: FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to accept the book");
+        throw new Error("Failed to accept the Articles");
       }
-      
+
       fetchPendingBooks();
-      setMessage("Book accepted successfully!");
+      addNotification("Article accepted successfully!"); 
     } catch (error) {
-      console.error("Error accepting book:", error);
-      setMessage("Error accepting book. Please try again.");
+      console.error("Error accepting Articles:", error);
+      addNotification("Error accepting Articles. Please try again.");
     }
   };
 
@@ -58,21 +59,20 @@ const Moderation: FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to reject the book");
+        throw new Error("Failed to reject the Articles");
       }
-      
+
       fetchPendingBooks();
-      setMessage("Book rejected successfully!");
+      addNotification("Article rejected successfully!");
     } catch (error) {
-      console.error("Error rejecting book:", error);
-      setMessage("Error rejecting book. Please try again.");
+      console.error("Error rejecting Articles:", error);
+      addNotification("Error rejecting Articles. Please try again.");
     }
   };
 
   return (
     <div>
       <h1>Moderation Panel</h1>
-      {message && <p>{message}</p>}
       {pendingBooks.length === 0 ? (
         <p>No books pending moderation.</p>
       ) : (

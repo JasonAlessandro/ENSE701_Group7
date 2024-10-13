@@ -1,7 +1,11 @@
-// src/pages/_app.tsx
 import { AppProps } from 'next/app';
 import '../styles/globals.css';
+import { NotificationProvider } from '../Notification'; 
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <NotificationProvider> {}
+      <Component {...pageProps} />
+    </NotificationProvider>
+  );
 }

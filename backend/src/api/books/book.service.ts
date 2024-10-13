@@ -24,7 +24,7 @@ export class BookService {
     async update(id: string, updateDto: Partial<CreateBookDto>) {
         const updatedBook = await this.bookModel.findByIdAndUpdate(id, updateDto, { new: true });
         if (!updatedBook) {
-            throw new Error('Book not found');
+            throw new Error('Article not found');
         }
         return updatedBook;
     }
@@ -32,7 +32,7 @@ export class BookService {
     async accept(id: string) {
         const updatedBook = await this.bookModel.findByIdAndUpdate(id, { moderation: 'accepted' }, { new: true });
         if (!updatedBook) {
-            throw new Error('Book not found');
+            throw new Error('Article not found');
         }
         return updatedBook;
     }
