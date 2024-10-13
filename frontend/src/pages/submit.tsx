@@ -1,5 +1,6 @@
 import { FC, useState } from "react";
 import { useRouter } from "next/router";
+import { useNotification } from '../Notification'; 
 
 const Submit: FC = () => {
   const [formData, setFormData] = useState({
@@ -10,8 +11,8 @@ const Submit: FC = () => {
     published_date: "",
     publisher: "",
   });
-  const [message, setMessage] = useState("");
   const router = useRouter();
+  const { addNotification } = useNotification(); 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -20,7 +21,6 @@ const Submit: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(""); 
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books`, {
@@ -36,12 +36,11 @@ const Submit: FC = () => {
         throw new Error(errorData.error || "Failed to submit the form");
       }
 
-      setMessage("Book submitted for moderation!");
-      
+      addNotification("Article submitted for moderation!"); 
       router.push("/");
     } catch (error) {
       console.error("Error submitting form:", error);
-      setMessage("Error submitting form. Please try again.");
+      addNotification("Error submitting form. Please try again.");
     }
   };
 
@@ -63,8 +62,7 @@ const Submit: FC = () => {
         </div>
         <div>
           <label>Description:</label>
-          <textarea name="description" value={formData.description} onChange={handleChange} style={{ width: '610px', height: '50px' }} 
-          />
+          <textarea name="description" value={formData.description} onChange={handleChange} style={{ width: '610px', height: '50px' }} />
         </div>
         <div>
           <label>Published Date:</label>
@@ -76,7 +74,6 @@ const Submit: FC = () => {
         </div>
         <button type="submit">Submit</button>
       </form>
-      {message && <p>{message}</p>}
     </div>
   );
 };
