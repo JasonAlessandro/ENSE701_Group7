@@ -20,7 +20,6 @@ const Search = () => {
   }, []);
 
   useEffect(() => {
-    
     const storedQueries = localStorage.getItem('savedQueries');
     if (storedQueries) {
       setSavedQueries(JSON.parse(storedQueries));
@@ -35,7 +34,6 @@ const Search = () => {
     if (searchTerm && !savedQueries.includes(searchTerm)) {
       const updatedQueries = [...savedQueries, searchTerm];
       setSavedQueries(updatedQueries);
-      
       localStorage.setItem('savedQueries', JSON.stringify(updatedQueries));
     }
   };
