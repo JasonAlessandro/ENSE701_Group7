@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 const Search = () => {
   const [articles, setArticles] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [savedQueries, setSavedQueries] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -18,6 +19,36 @@ const Search = () => {
     fetchArticles();
   }, []);
 
+  useEffect(() => {
+    
+    const storedQueries = localStorage.getItem('savedQueries');
+    if (storedQueries) {
+      setSavedQueries(JSON.parse(storedQueries));
+    }
+  }, []);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSaveSearch = () => {
+    if (searchTerm && !savedQueries.includes(searchTerm)) {
+      const updatedQueries = [...savedQueries, searchTerm];
+      setSavedQueries(updatedQueries);
+      
+      localStorage.setItem('savedQueries', JSON.stringify(updatedQueries));
+    }
+  };
+
+  const handleClearQueries = () => {
+    setSavedQueries([]);
+    localStorage.removeItem('savedQueries');
+  };
+
+  const handleQueryClick = (query: string) => {
+    setSearchTerm(query); 
+  };
+
   const filteredArticles = articles.filter(
     (article) =>
       article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,8 +62,10 @@ const Search = () => {
         type="text"
         placeholder="Search by title or author"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleSearchChange}
       />
+      <button onClick={handleSaveSearch}>Save Search</button>
+
       {filteredArticles.length === 0 ? (
         <p>No articles found.</p>
       ) : (
@@ -61,6 +94,25 @@ const Search = () => {
           </tbody>
         </table>
       )}
+
+      <h2>Saved Search Queries</h2>
+      {savedQueries.length === 0 ? (
+        <p>No saved queries.</p>
+      ) : (
+        <ul>
+          {savedQueries.map((query, index) => (
+            <li
+              key={index}
+              style={{ cursor: 'pointer', color: 'blue' }}
+              onClick={() => handleQueryClick(query)}
+            >
+              {query}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <button onClick={handleClearQueries}>Clear Saved Queries</button>
     </div>
   );
 };

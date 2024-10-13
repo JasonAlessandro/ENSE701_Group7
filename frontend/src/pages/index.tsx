@@ -65,7 +65,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
   };
 
   return (
-    <div>
+    <div style={{ textAlign: 'center' }}>
       <h1>Welcome to the Software Empirical Evidence Database (SPEED)</h1>
 
       <div style={{ position: "relative", display: "inline-block", float: "right" }}>
@@ -96,63 +96,60 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
       {articles.length === 0 ? (
         <p>No articles found.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>
-                Title
-                <button onClick={() => sortArticles("title")} style={sortButtonStyle}>
-                  Sort {getSortArrow("title")}
-                </button>
-              </th>
-              <th>
-                Author
-                <button onClick={() => sortArticles("author")} style={sortButtonStyle}>
-                  Sort {getSortArrow("author")}
-                </button>
-              </th>
-              <th>
-                ISBN
-                <button onClick={() => sortArticles("isbn")} style={sortButtonStyle}>
-                  Sort {getSortArrow("isbn")}
-                </button>
-              </th>
-              <th>Description</th>
-              <th>
-                Published Date
-                <button onClick={() => sortArticles("published_date")} style={sortButtonStyle}>
-                  Sort {getSortArrow("published_date")}
-                </button>
-              </th>
-              <th>
-                Publisher
-                <button onClick={() => sortArticles("publisher")} style={sortButtonStyle}>
-                  Sort {getSortArrow("publisher")}
-                </button>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {articles.map((article) => (
-              <tr key={article._id}>
-                <td>{article.title}</td>
-                <td>{article.author}</td>
-                <td>{article.isbn}</td>
-                <td>{article.description}</td>
-                <td>{new Date(article.published_date).toLocaleDateString("en-US")}</td>
-                <td>{article.publisher}</td>
+        <div style={{ width: '80%', maxWidth: '1500px', margin: '0 auto' }}> {}
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+            <thead>
+              <tr>
+                <th>
+                  Title
+                  <button onClick={() => sortArticles("title")} style={sortButtonStyle}>
+                    Sort {getSortArrow("title")}
+                  </button>
+                </th>
+                <th>
+                  Author
+                  <button onClick={() => sortArticles("author")} style={sortButtonStyle}>
+                    Sort {getSortArrow("author")}
+                  </button>
+                </th>
+                <th>
+                  ISBN
+                  <button onClick={() => sortArticles("isbn")} style={sortButtonStyle}>
+                    Sort {getSortArrow("isbn")}
+                  </button>
+                </th>
+                <th>Description</th>
+                <th>
+                  Published Date
+                  <button onClick={() => sortArticles("published_date")} style={sortButtonStyle}>
+                    Sort {getSortArrow("published_date")}
+                  </button>
+                </th>
+                <th>
+                  Publisher
+                  <button onClick={() => sortArticles("publisher")} style={sortButtonStyle}>
+                    Sort {getSortArrow("publisher")}
+                  </button>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {articles.map((article) => (
+                <tr key={article._id}>
+                  <td>{article.title}</td>
+                  <td>{article.author}</td>
+                  <td>{article.isbn}</td>
+                  <td>{article.description}</td>
+                  <td>{new Date(article.published_date).toLocaleDateString("en-US")}</td>
+                  <td>{article.publisher}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       <style jsx>{`
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-        }
         th,
         td {
           border: 1px solid #ddd;
