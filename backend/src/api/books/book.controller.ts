@@ -20,12 +20,12 @@ export class BookController {
     async addBook(@Body() createBookDto: CreateBookDto) {
         try {
             await this.bookService.create({ ...createBookDto, moderation: 'pending' });
-            return { message: 'Book submitted for moderation' };
+            return { message: 'Article submitted for moderation' };
         } catch (error) {
             throw new HttpException(
                 {
                     status: HttpStatus.BAD_REQUEST,
-                    error: 'Unable to submit this book',
+                    error: 'Unable to submit this Article',
                 },
                 HttpStatus.BAD_REQUEST,
                 { cause: error },
@@ -52,7 +52,7 @@ export class BookController {
             throw new HttpException(
                 {
                     status: HttpStatus.BAD_REQUEST,
-                    error: 'Unable to update this book',
+                    error: 'Unable to update this Article',
                 },
                 HttpStatus.BAD_REQUEST,
                 { cause: error },
@@ -69,7 +69,7 @@ export class BookController {
             throw new HttpException(
                 {
                     status: HttpStatus.BAD_REQUEST,
-                    error: 'Unable to accept this book',
+                    error: 'Unable to accept this Article',
                 },
                 HttpStatus.BAD_REQUEST,
                 { cause: error },
@@ -81,12 +81,12 @@ export class BookController {
     async rejectBook(@Param('id') id: string) {
         try {
             await this.bookService.reject(id);
-            return { message: 'Book rejected successfully' };
+            return { message: 'Article rejected successfully' };
         } catch (error) {
             throw new HttpException(
                 {
                     status: HttpStatus.BAD_REQUEST,
-                    error: 'Unable to reject this book',
+                    error: 'Unable to reject this Article',
                 },
                 HttpStatus.BAD_REQUEST,
                 { cause: error },
