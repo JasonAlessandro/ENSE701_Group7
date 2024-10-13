@@ -8,7 +8,7 @@ interface Book {
   description: string;
   published_date: string;
   publisher: string;
-  moderation: 'pending' | 'accepted' | 'rejected'; // Ensure this field is included
+  moderation: 'pending' | 'accepted' | 'rejected'; 
 }
 
 const Moderation: FC = () => {
@@ -43,7 +43,6 @@ const Moderation: FC = () => {
         throw new Error("Failed to accept the book");
       }
       
-      // Refresh the pending books after accepting one
       fetchPendingBooks();
       setMessage("Book accepted successfully!");
     } catch (error) {
@@ -62,7 +61,6 @@ const Moderation: FC = () => {
         throw new Error("Failed to reject the book");
       }
       
-      // Refresh the pending books after rejecting one
       fetchPendingBooks();
       setMessage("Book rejected successfully!");
     } catch (error) {

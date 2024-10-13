@@ -35,12 +35,12 @@ export class BookController {
 
     @Get('/')
     async findAcceptedBooks() {
-        return this.bookService.findAll(); // Return only accepted books
+        return this.bookService.findAll();
     }
 
     @Get('/pending')
     async findPendingBooks() {
-        return this.bookService.findPending(); // Return only pending books
+        return this.bookService.findPending(); 
     }
 
     @Put(':id')
