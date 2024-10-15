@@ -237,7 +237,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
               {visibleColumns.author && <td>{article.author}</td>}
               {visibleColumns.isbn && <td>{article.isbn}</td>}
               {visibleColumns.description && <td>{article.description}</td>}
-              {visibleColumns.published_date && <td>{new Date(article.published_date).toLocaleDateString()}</td>}
+              {visibleColumns.published_date && <td>{new Date(article.published_date).toLocaleDateString('en-GB')}</td>}
               {visibleColumns.publisher && <td>{article.publisher}</td>}
             </tr>
           ))}
