@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FC, useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import Rating from 'react-rating-stars-component'; // For displaying stars
 
 interface Article {
   _id: string;
@@ -9,7 +9,7 @@ interface Article {
   isbn: string;
   description: string;
   published_date: string;
-  publisher: string;
+  ratings: number[]; // Ratings field
 }
 
 interface HomeProps {
@@ -23,17 +23,16 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
   const [savedQueries, setSavedQueries] = useState<string[]>([]);
   const [sortField, setSortField] = useState<keyof Article | null>(null);
   const [isAscending, setIsAscending] = useState(true);
-  const [isDropdownOpen, setDropdownOpen] = useState(false); // For menu dropdown
-  const [isColumnDropdownOpen, setColumnDropdownOpen] = useState(false); // For column visibility dropdown
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isColumnDropdownOpen, setColumnDropdownOpen] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState({
     title: true,
     author: true,
     isbn: true,
     description: true,
     published_date: true,
-    publisher: true,
+    rating: true, // Add rating to visibleColumns
   });
-  const router = useRouter();
 
   useEffect(() => {
     const storedQueries = localStorage.getItem("savedQueries");
@@ -61,8 +60,14 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
 
   const sortArticles = (field: keyof Article) => {
     const isSameField = sortField === field;
+    
+    if (!isSameField) {
+      setIsAscending(true); // If it's a new field, always start with ascending
+    } else {
+      setIsAscending(!isAscending); // Otherwise, toggle the sorting direction
+    }
+    
     setSortField(field);
-    setIsAscending(!isAscending);
 
     let sortedArticles;
     if (field === 'published_date') {
@@ -70,6 +75,12 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
         const dateA = new Date(a.published_date).getTime();
         const dateB = new Date(b.published_date).getTime();
         return isAscending ? dateA - dateB : dateB - dateA;
+      });
+    } else if (field === 'ratings') {
+      sortedArticles = [...filteredArticles].sort((a, b) => {
+        const avgRatingA = getAverageRating(a.ratings);
+        const avgRatingB = getAverageRating(b.ratings);
+        return isAscending ? avgRatingA - avgRatingB : avgRatingB - avgRatingA;
       });
     } else {
       sortedArticles = [...filteredArticles].sort((a, b) => {
@@ -122,6 +133,10 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
       article.author.toLowerCase().includes(searchQuery)
     );
     setFilteredArticles(filtered);
+  };
+
+  const getAverageRating = (ratings: number[]): number => {
+    return ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
   };
 
   return (
@@ -200,7 +215,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
             </div>
             <div style={checkboxContainerStyle}>
               <input type="checkbox" checked={visibleColumns.isbn} onChange={() => handleCheckboxChange('isbn')} style={checkboxStyle} />
-              <label>ISBN</label>
+              <label>DOI</label>
             </div>
             <div style={checkboxContainerStyle}>
               <input type="checkbox" checked={visibleColumns.description} onChange={() => handleCheckboxChange('description')} style={checkboxStyle} />
@@ -211,8 +226,8 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
               <label>Published Date</label>
             </div>
             <div style={checkboxContainerStyle}>
-              <input type="checkbox" checked={visibleColumns.publisher} onChange={() => handleCheckboxChange('publisher')} style={checkboxStyle} />
-              <label>Publisher</label>
+              <input type="checkbox" checked={visibleColumns.rating} onChange={() => handleCheckboxChange('rating')} style={checkboxStyle} />
+              <label>Rating</label>
             </div>
           </div>
         )}
@@ -224,10 +239,10 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
           <tr>
             {visibleColumns.title && <th>Title <button onClick={() => sortArticles("title")} style={sortButtonStyle}>Sort {getSortArrow("title")}</button></th>}
             {visibleColumns.author && <th>Author <button onClick={() => sortArticles("author")} style={sortButtonStyle}>Sort {getSortArrow("author")}</button></th>}
-            {visibleColumns.isbn && <th>ISBN <button onClick={() => sortArticles("isbn")} style={sortButtonStyle}>Sort {getSortArrow("isbn")}</button></th>}
+            {visibleColumns.isbn && <th>DOI <button onClick={() => sortArticles("isbn")} style={sortButtonStyle}>Sort {getSortArrow("isbn")}</button></th>}
             {visibleColumns.description && <th>Description <button onClick={() => sortArticles("description")} style={sortButtonStyle}>Sort {getSortArrow("description")}</button></th>}
             {visibleColumns.published_date && <th>Published Date <button onClick={() => sortArticles("published_date")} style={sortButtonStyle}>Sort {getSortArrow("published_date")}</button></th>}
-            {visibleColumns.publisher && <th>Publisher <button onClick={() => sortArticles("publisher")} style={sortButtonStyle}>Sort {getSortArrow("publisher")}</button></th>}
+            {visibleColumns.rating && <th>Rating <button onClick={() => sortArticles("ratings")} style={sortButtonStyle}>Sort {getSortArrow("ratings")}</button></th>}
           </tr>
         </thead>
         <tbody>
@@ -238,7 +253,17 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
               {visibleColumns.isbn && <td>{article.isbn}</td>}
               {visibleColumns.description && <td>{article.description}</td>}
               {visibleColumns.published_date && <td>{new Date(article.published_date).toLocaleDateString('en-GB')}</td>}
-              {visibleColumns.publisher && <td>{article.publisher}</td>}
+              {visibleColumns.rating && (
+                <td>
+                  <Rating 
+                    count={5} 
+                    value={getAverageRating(article.ratings)} 
+                    size={24}
+                    edit={false}  // Disable editing on the index page
+                    activeColor="#ffd700"
+                  />
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

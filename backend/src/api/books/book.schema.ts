@@ -20,14 +20,14 @@ export class Book {
     @Prop({ type: Date })
     published_date: Date;
 
-    @Prop()
-    publisher: string;
-
     @Prop({ type: Date, default: Date.now })
     updated_date: Date;
 
     @Prop({ default: 'pending' })
-    moderation: 'pending' | 'accepted' | 'rejected';  // Track moderation status
+    moderation: 'pending' | 'accepted' | 'rejected';
+
+    @Prop({ type: [Number], default: [] }) 
+    ratings: number[];
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);

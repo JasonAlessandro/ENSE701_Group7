@@ -14,11 +14,11 @@ export class BookService {
     }
     
     async findAll() {
-        return this.bookModel.find({ moderation: 'accepted' }).exec(); 
+        return this.bookModel.find({ moderation: 'accepted' }).exec();
     }
-    
+
     async findPending() {
-        return this.bookModel.find({ moderation: 'pending' }).exec(); 
+        return this.bookModel.find({ moderation: 'pending' }).exec();
     }
 
     async update(id: string, updateDto: Partial<CreateBookDto>) {
@@ -42,5 +42,15 @@ export class BookService {
         if (!deletedBook) {
             throw new Error('Article not found');
         }
+    }
+
+    // New method to add a rating
+    async addRating(id: string, rating: number) {
+        const book = await this.bookModel.findById(id);
+        if (!book) {
+            throw new Error('Book not found');
+        }
+        book.ratings.push(rating); 
+        return await book.save();
     }
 }
