@@ -9,7 +9,6 @@ interface Book {
   author: string;
   description: string;
   published_date: string;
-  publisher: string;
   moderation: 'pending' | 'accepted' | 'rejected'; 
 }
 
@@ -84,10 +83,9 @@ const Moderation: FC = () => {
             <tr>
               <th>Title</th>
               <th>Author</th>
-              <th>ISBN</th>
+              <th>DOI</th>
               <th>Description</th>
               <th>Published Date</th>
-              <th>Publisher</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -99,7 +97,6 @@ const Moderation: FC = () => {
                 <td>{book.isbn}</td>
                 <td>{book.description}</td>
                 <td>{new Date(book.published_date).toLocaleDateString("en-US")}</td>
-                <td>{book.publisher}</td>
                 <td>
                   <button onClick={() => handleAccept(book._id)}>Accept</button>
                   <button onClick={() => handleReject(book._id)}>Reject</button>

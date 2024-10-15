@@ -9,7 +9,6 @@ const Submit: FC = () => {
     author: "",
     description: "",
     published_date: "",
-    publisher: "",
   });
   const router = useRouter();
   const { addNotification } = useNotification(); 
@@ -53,7 +52,7 @@ const Submit: FC = () => {
           <input type="text" name="title" value={formData.title} onChange={handleChange} required />
         </div>
         <div>
-          <label>ISBN:</label>
+          <label>DOI:</label>
           <input type="text" name="isbn" value={formData.isbn} onChange={handleChange} required />
         </div>
         <div>
@@ -68,10 +67,6 @@ const Submit: FC = () => {
           <label>Published Date:</label>
           <input type="date" name="published_date" value={formData.published_date} onChange={handleChange} required />
         </div>
-        <div>
-          <label>Publisher:</label>
-          <input type="text" name="publisher" value={formData.publisher} onChange={handleChange} required />
-          </div>
         <button type="submit">Submit</button>
       </form>
       <button onClick={() => router.push("/")}>Back to Home</button> {/* Back to Home button */}
