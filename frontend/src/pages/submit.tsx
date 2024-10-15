@@ -71,10 +71,12 @@ const Submit: FC = () => {
         <div>
           <label>Publisher:</label>
           <input type="text" name="publisher" value={formData.publisher} onChange={handleChange} required />
-        </div>
+          </div>
         <button type="submit">Submit</button>
       </form>
+      <button onClick={() => router.push("/")}>Back to Home</button> {/* Back to Home button */}
     </div>
+    
   );
 };
 
