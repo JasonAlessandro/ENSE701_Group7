@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { useNotification } from '../Notification';
+import { useRouter } from "next/router";
 
 interface Book {
   _id: string;
@@ -15,6 +16,7 @@ interface Book {
 const Moderation: FC = () => {
   const [pendingBooks, setPendingBooks] = useState<Book[]>([]);
   const { addNotification } = useNotification();
+  const router = useRouter();
 
   useEffect(() => {
     fetchPendingBooks();
@@ -73,6 +75,7 @@ const Moderation: FC = () => {
   return (
     <div>
       <h1>Moderation Panel</h1>
+      <button onClick={() => router.push("/")}>Back to Home</button> {/* Back to Home button */}
       {pendingBooks.length === 0 ? (
         <p>No books pending moderation.</p>
       ) : (
