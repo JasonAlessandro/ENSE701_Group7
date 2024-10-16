@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
+import Rating from "react-rating-stars-component";
 
 interface Article {
   _id: string;
@@ -8,7 +9,7 @@ interface Article {
   author: string;
   description: string;
   published_date: string;
-  publisher: string;
+  ratings: number[]; // Updated to store ratings
   moderation: string;
 }
 
@@ -19,7 +20,9 @@ const Analysis: FC = () => {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books?moderation=accepted`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books?moderation=accepted`
+      );
       const data = await response.json();
       setArticles(data);
     };
@@ -31,7 +34,9 @@ const Analysis: FC = () => {
     setUpdatedArticle(article);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     if (updatedArticle) {
       setUpdatedArticle({ ...updatedArticle, [e.target.name]: e.target.value });
     }
@@ -39,16 +44,23 @@ const Analysis: FC = () => {
 
   const handleUpdate = async () => {
     if (updatedArticle) {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${updatedArticle._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedArticle),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${updatedArticle._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedArticle),
+        }
+      );
 
       if (response.ok) {
-        setArticles(articles.map(article => (article._id === updatedArticle._id ? updatedArticle : article)));
+        setArticles(
+          articles.map((article) =>
+            article._id === updatedArticle._id ? updatedArticle : article
+          )
+        );
         setEditingArticle(null);
         setUpdatedArticle(null);
       } else {
@@ -57,46 +69,163 @@ const Analysis: FC = () => {
     }
   };
 
+  const handleRating = async (articleId: string, newRating: number) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${articleId}/rate`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rating: newRating }),
+      }
+    );
+
+    if (response.ok) {
+      setArticles(
+        articles.map((article) =>
+          article._id === articleId
+            ? { ...article, ratings: [...article.ratings, newRating] }
+            : article
+        )
+      );
+    } else {
+      console.error("Failed to rate the article");
+    }
+  };
   
   const inputStyle = {
-    width: '100%', 
-    padding: '8px',
-    marginBottom: '10px', 
-    border: '1px solid #ccc', 
-    borderRadius: '4px', 
+    width: "100%",
+    padding: "8px",
+    marginBottom: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
-      <div style={{ width: '80%', maxWidth: '1500px' }}> {}
-        <h1 style={{ textAlign: 'center' }}>Analysis Panel</h1> {}
+    <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
+      <div style={{ width: "80%", maxWidth: "1500px" }}>
+        <h1 style={{ textAlign: "center" }}>Analysis Panel</h1>
+
+        {/* Back Button */}
+        <div style={{ marginBottom: "20px" }}>
+          <Link href="/">
+            <button>Back to Home</button>
+          </Link>
+        </div>
+
         {articles.length === 0 ? (
           <p>No accepted articles found.</p>
         ) : (
-          <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+          <table
+            style={{
+              width: "100%",
+              tableLayout: "fixed",
+              borderCollapse: "collapse",
+            }}
+          >
             <thead>
               <tr>
-                <th style={{ width: '30%', padding: '8px', border: '1px solid #ddd' }}>Title</th>
-                <th style={{ width: '15%', padding: '8px', border: '1px solid #ddd' }}>Author</th>
-                <th style={{ width: '10%', padding: '8px', border: '1px solid #ddd' }}>ISBN</th>
-                <th style={{ width: '45%', padding: '8px', border: '1px solid #ddd' }}>Description</th>
-                <th style={{ width: '10%', padding: '8px', border: '1px solid #ddd' }}>Published Date</th>
-                <th style={{ width: '10%', padding: '8px', border: '1px solid #ddd' }}>Publisher</th>
-                <th style={{ width: '6.5%', padding: '8px', border: '1px solid #ddd' }}>Edit</th>
+                <th
+                  style={{
+                    width: "30%",
+                    padding: "8px",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  Title
+                </th>
+                <th
+                  style={{
+                    width: "15%",
+                    padding: "8px",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  Author
+                </th>
+                <th
+                  style={{
+                    width: "10%",
+                    padding: "8px",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  DOI
+                </th>
+                <th
+                  style={{
+                    width: "45%",
+                    padding: "8px",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  Description
+                </th>
+                <th
+                  style={{
+                    width: "10%",
+                    padding: "8px",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  Published Date
+                </th>
+                <th
+                  style={{
+                    width: "10%",
+                    padding: "8px",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  Rating
+                </th>
+                <th
+                  style={{
+                    width: "6.5%",
+                    padding: "8px",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  Edit
+                </th>
               </tr>
             </thead>
             <tbody>
               {articles.map((article) => (
                 <tr key={article._id}>
-                  <td style={{ padding: '8px', border: '1px solid #ddd' }}>{article.title}</td>
-                  <td style={{ padding: '8px', border: '1px solid #ddd' }}>{article.author}</td>
-                  <td style={{ padding: '8px', border: '1px solid #ddd' }}>{article.isbn}</td>
-                  <td style={{ padding: '8px', border: '1px solid #ddd' }}>{article.description}</td>
-                  <td style={{ padding: '8px', border: '1px solid #ddd' }}>
-                    {new Date(article.published_date).toLocaleDateString("en-US")}
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {article.title}
                   </td>
-                  <td style={{ padding: '8px', border: '1px solid #ddd' }}>{article.publisher}</td>
-                  <td style={{ padding: '8px', border: '1px solid #ddd' }}>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {article.author}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {article.isbn}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {article.description}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {new Date(article.published_date).toLocaleDateString("en-GB")}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    <Rating
+                      count={5}
+                      value={
+                        Math.floor(
+                          article.ratings.reduce((a, b) => a + b, 0) /
+                            article.ratings.length
+                        ) || 0
+                      }
+                      size={24}
+                      activeColor="#ffd700"
+                      onChange={(newRating: number) =>
+                        handleRating(article._id, newRating)
+                      }
+                    />
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
                     <button onClick={() => handleEditClick(article)}>Edit</button>
                   </td>
                 </tr>
@@ -122,7 +251,7 @@ const Analysis: FC = () => {
               value={updatedArticle?.author}
               onChange={handleInputChange}
               placeholder="Author"
-              style={inputStyle} 
+              style={inputStyle}
             />
             <input
               type="text"
@@ -130,7 +259,7 @@ const Analysis: FC = () => {
               value={updatedArticle?.isbn}
               onChange={handleInputChange}
               placeholder="ISBN"
-              style={inputStyle} 
+              style={inputStyle}
             />
             <textarea
               name="description"
@@ -138,22 +267,14 @@ const Analysis: FC = () => {
               onChange={handleInputChange}
               placeholder="Description"
               rows={3}
-              style={{ ...inputStyle, height: 'auto' }} 
-            />
-            <input
-              type="text"
-              name="publisher"
-              value={updatedArticle?.publisher}
-              onChange={handleInputChange}
-              placeholder="Publisher"
-              style={inputStyle} 
+              style={{ ...inputStyle, height: "auto" }}
             />
             <input
               type="date"
               name="published_date"
-              value={updatedArticle?.published_date?.split('T')[0]} 
+              value={updatedArticle?.published_date?.split("T")[0]}
               onChange={handleInputChange}
-              style={inputStyle} 
+              style={inputStyle}
             />
             <button onClick={handleUpdate}>Save Changes</button>
             <button onClick={() => setEditingArticle(null)}>Cancel</button>

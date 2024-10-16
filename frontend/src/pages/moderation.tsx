@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { useNotification } from '../Notification';
+import { useRouter } from "next/router";
 
 interface Book {
   _id: string;
@@ -8,13 +9,13 @@ interface Book {
   author: string;
   description: string;
   published_date: string;
-  publisher: string;
   moderation: 'pending' | 'accepted' | 'rejected'; 
 }
 
 const Moderation: FC = () => {
   const [pendingBooks, setPendingBooks] = useState<Book[]>([]);
   const { addNotification } = useNotification();
+  const router = useRouter();
 
   useEffect(() => {
     fetchPendingBooks();
@@ -73,6 +74,7 @@ const Moderation: FC = () => {
   return (
     <div>
       <h1>Moderation Panel</h1>
+      <button onClick={() => router.push("/")}>Back to Home</button> {/* Back to Home button */}
       {pendingBooks.length === 0 ? (
         <p>No books pending moderation.</p>
       ) : (
@@ -81,10 +83,9 @@ const Moderation: FC = () => {
             <tr>
               <th>Title</th>
               <th>Author</th>
-              <th>ISBN</th>
+              <th>DOI</th>
               <th>Description</th>
               <th>Published Date</th>
-              <th>Publisher</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -96,7 +97,6 @@ const Moderation: FC = () => {
                 <td>{book.isbn}</td>
                 <td>{book.description}</td>
                 <td>{new Date(book.published_date).toLocaleDateString("en-US")}</td>
-                <td>{book.publisher}</td>
                 <td>
                   <button onClick={() => handleAccept(book._id)}>Accept</button>
                   <button onClick={() => handleReject(book._id)}>Reject</button>

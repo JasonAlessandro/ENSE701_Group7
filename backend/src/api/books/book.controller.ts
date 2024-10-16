@@ -40,7 +40,7 @@ export class BookController {
 
     @Get('/pending')
     async findPendingBooks() {
-        return this.bookService.findPending(); 
+        return this.bookService.findPending();
     }
 
     @Put(':id')
@@ -87,6 +87,23 @@ export class BookController {
                 {
                     status: HttpStatus.BAD_REQUEST,
                     error: 'Unable to reject this Article',
+                },
+                HttpStatus.BAD_REQUEST,
+                { cause: error },
+            );
+        }
+    }
+
+    @Put(':id/rate')
+    async rateBook(@Param('id') id: string, @Body('rating') rating: number) {
+        try {
+            const updatedBook = await this.bookService.addRating(id, rating);
+            return updatedBook;
+        } catch (error) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.BAD_REQUEST,
+                    error: 'Unable to rate this Article',
                 },
                 HttpStatus.BAD_REQUEST,
                 { cause: error },
