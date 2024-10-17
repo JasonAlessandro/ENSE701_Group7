@@ -35,12 +35,17 @@ export class BookController {
 
     @Get('/')
     async findAcceptedBooks() {
-        return this.bookService.findAll();
+        return this.bookService.findAccepted();
     }
 
     @Get('/pending')
     async findPendingBooks() {
         return this.bookService.findPending();
+    }
+
+    @Get('/rejected')
+    async findRejectedBooks() {
+        return this.bookService.findRejected();
     }
 
     @Put(':id')
@@ -77,11 +82,11 @@ export class BookController {
         }
     }
 
-    @Delete(':id/reject')
+    @Put(':id/reject') 
     async rejectBook(@Param('id') id: string) {
         try {
-            await this.bookService.reject(id);
-            return { message: 'Article rejected successfully' };
+            const rejectedBook = await this.bookService.reject(id);
+            return rejectedBook;
         } catch (error) {
             throw new HttpException(
                 {

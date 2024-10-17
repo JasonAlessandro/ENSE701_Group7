@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 import Rating from "react-rating-stars-component";
+import { useNotification } from "../Notification"; 
 
 interface Article {
   _id: string;
@@ -8,8 +9,8 @@ interface Article {
   isbn: string;
   author: string;
   description: string;
-  published_date: string;
-  ratings: number[]; // Updated to store ratings
+  published_date: number;
+  ratings: number[];
   moderation: string;
 }
 
@@ -17,6 +18,7 @@ const Analysis: FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [updatedArticle, setUpdatedArticle] = useState<Article | null>(null);
+  const { addNotification } = useNotification(); 
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -44,56 +46,68 @@ const Analysis: FC = () => {
 
   const handleUpdate = async () => {
     if (updatedArticle) {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${updatedArticle._id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedArticle),
+          }
+        );
+
+        if (response.ok) {
+          setArticles(
+            articles.map((article) =>
+              article._id === updatedArticle._id ? updatedArticle : article
+            )
+          );
+          setEditingArticle(null);
+          setUpdatedArticle(null);
+          addNotification("Article updated successfully!"); 
+        } else {
+          throw new Error("Failed to update article");
+        }
+      } catch (error) {
+        console.error("Failed to update article:", error);
+        addNotification("Error updating article. Please try again.");
+      }
+    }
+  };
+
+  const handleRating = async (articleId: string, newRating: number) => {
+    try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${updatedArticle._id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${articleId}/rate`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedArticle),
+          body: JSON.stringify({ rating: newRating }),
         }
       );
 
       if (response.ok) {
         setArticles(
           articles.map((article) =>
-            article._id === updatedArticle._id ? updatedArticle : article
+            article._id === articleId
+              ? { ...article, ratings: [...article.ratings, newRating] }
+              : article
           )
         );
-        setEditingArticle(null);
-        setUpdatedArticle(null);
+        addNotification("Rating submitted successfully!"); 
       } else {
-        console.error("Failed to update article");
+        throw new Error("Failed to rate the article");
       }
+    } catch (error) {
+      console.error("Failed to rate the article:", error);
+      addNotification("Error rating the article. Please try again.");
     }
   };
 
-  const handleRating = async (articleId: string, newRating: number) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${articleId}/rate`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ rating: newRating }),
-      }
-    );
-
-    if (response.ok) {
-      setArticles(
-        articles.map((article) =>
-          article._id === articleId
-            ? { ...article, ratings: [...article.ratings, newRating] }
-            : article
-        )
-      );
-    } else {
-      console.error("Failed to rate the article");
-    }
-  };
-  
   const inputStyle = {
     width: "100%",
     padding: "8px",
@@ -169,11 +183,11 @@ const Analysis: FC = () => {
                     border: "1px solid #ddd",
                   }}
                 >
-                  Published Date
+                  Journal Year
                 </th>
                 <th
                   style={{
-                    width: "10%",
+                    width: "15%",
                     padding: "8px",
                     border: "1px solid #ddd",
                   }}
@@ -182,7 +196,7 @@ const Analysis: FC = () => {
                 </th>
                 <th
                   style={{
-                    width: "6.5%",
+                    width: "9%",
                     padding: "8px",
                     border: "1px solid #ddd",
                   }}
@@ -207,7 +221,7 @@ const Analysis: FC = () => {
                     {article.description}
                   </td>
                   <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    {new Date(article.published_date).toLocaleDateString("en-GB")}
+                    {article.published_date.toString().slice(0, 4)}
                   </td>
                   <td style={{ padding: "8px", border: "1px solid #ddd" }}>
                     <Rating
@@ -226,7 +240,9 @@ const Analysis: FC = () => {
                     />
                   </td>
                   <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    <button onClick={() => handleEditClick(article)}>Edit</button>
+                    <button onClick={() => handleEditClick(article)}>
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -270,14 +286,17 @@ const Analysis: FC = () => {
               style={{ ...inputStyle, height: "auto" }}
             />
             <input
-              type="date"
+              type="number"
               name="published_date"
-              value={updatedArticle?.published_date?.split("T")[0]}
+              value={updatedArticle?.published_date}
               onChange={handleInputChange}
+              placeholder="YYYY"
               style={inputStyle}
             />
-            <button onClick={handleUpdate}>Save Changes</button>
-            <button onClick={() => setEditingArticle(null)}>Cancel</button>
+            <div style={{ marginTop: '10px' }}>
+              <button style={{ marginRight: '10px' }} onClick={handleUpdate}>Save Changes</button>
+              <button onClick={() => setEditingArticle(null)}>Cancel</button>
+            </div>
           </div>
         )}
       </div>

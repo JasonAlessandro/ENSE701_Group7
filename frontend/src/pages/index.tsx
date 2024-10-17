@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FC, useState, useEffect, useCallback } from "react";
-import Rating from 'react-rating-stars-component'; // For displaying stars
+import Rating from "react-rating-stars-component";
 
 interface Article {
   _id: string;
@@ -9,7 +9,7 @@ interface Article {
   isbn: string;
   description: string;
   published_date: string;
-  ratings: number[]; // Ratings field
+  ratings: number[];
 }
 
 interface HomeProps {
@@ -18,11 +18,12 @@ interface HomeProps {
 
 const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
   const [articles] = useState(initialArticles);
-  const [filteredArticles, setFilteredArticles] = useState<Article[]>(initialArticles);
+  const [filteredArticles, setFilteredArticles] =
+    useState<Article[]>(initialArticles);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [savedQueries, setSavedQueries] = useState<string[]>([]);
   const [sortField, setSortField] = useState<keyof Article | null>(null);
-  const [isAscending] = useState(true);
+  const [isAscending, setIsAscending] = useState(true); // Update to useState here
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isColumnDropdownOpen, setColumnDropdownOpen] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState({
@@ -31,7 +32,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
     isbn: true,
     description: true,
     published_date: true,
-    rating: true, // Add rating to visibleColumns
+    rating: true,
   });
 
   useEffect(() => {
@@ -54,19 +55,16 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
   };
 
   const getAverageRating = (ratings: number[]): number => {
-    return ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
+    return ratings.length
+      ? ratings.reduce((a, b) => a + b, 0) / ratings.length
+      : 0;
   };
 
   const sortArticles = useCallback(() => {
-    let sortedArticles;
+    if (!sortField) return;
 
-    if (sortField === 'published_date') {
-      sortedArticles = [...filteredArticles].sort((a, b) => {
-        const dateA = new Date(a.published_date).getTime();
-        const dateB = new Date(b.published_date).getTime();
-        return isAscending ? dateA - dateB : dateB - dateA;
-      });
-    } else if (sortField === 'ratings') {
+    let sortedArticles;
+    if (sortField === "ratings") {
       sortedArticles = [...filteredArticles].sort((a, b) => {
         const avgRatingA = getAverageRating(a.ratings);
         const avgRatingB = getAverageRating(b.ratings);
@@ -74,8 +72,8 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
       });
     } else {
       sortedArticles = [...filteredArticles].sort((a, b) => {
-        const valueA = a[sortField!].toString().toLowerCase();
-        const valueB = b[sortField!].toString().toLowerCase();
+        const valueA = a[sortField]?.toString().toLowerCase() || "";
+        const valueB = b[sortField]?.toString().toLowerCase() || "";
         return isAscending
           ? valueA.localeCompare(valueB)
           : valueB.localeCompare(valueA);
@@ -92,9 +90,10 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     const searchQuery = e.target.value.toLowerCase();
-    const filtered = articles.filter(article =>
-      article.title.toLowerCase().includes(searchQuery) ||
-      article.author.toLowerCase().includes(searchQuery)
+    const filtered = articles.filter(
+      (article) =>
+        article.title.toLowerCase().includes(searchQuery) ||
+        article.author.toLowerCase().includes(searchQuery)
     );
     setFilteredArticles(filtered);
   };
@@ -109,17 +108,29 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
 
   const handleClearQueries = () => {
     setSavedQueries([]);
-    localStorage.removeItem('savedQueries');
+    localStorage.removeItem("savedQueries");
   };
 
   const handleQueryClick = (query: string) => {
     setSearchTerm(query);
     const searchQuery = query.toLowerCase();
-    const filtered = articles.filter(article =>
-      article.title.toLowerCase().includes(searchQuery) ||
-      article.author.toLowerCase().includes(searchQuery)
+    const filtered = articles.filter(
+      (article) =>
+        article.title.toLowerCase().includes(searchQuery) ||
+        article.author.toLowerCase().includes(searchQuery)
     );
     setFilteredArticles(filtered);
+  };
+
+  const handleSortFieldChange = (field: keyof Article) => {
+    if (sortField === field) {
+      // If the same field is clicked, toggle the sort direction
+      setIsAscending(!isAscending);
+    } else {
+      // If a new field is clicked, set that field and reset to ascending order
+      setSortField(field);
+      setIsAscending(true);
+    }
   };
 
   const getSortArrow = (field: keyof Article) => {
@@ -134,7 +145,13 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
       <h1>Welcome to the Software Empirical Evidence Database (SPEED)</h1>
 
       {/* Menu Dropdown */}
-      <div style={{ position: "relative", display: "inline-block", float: "right" }}>
+      <div
+        style={{
+          position: "relative",
+          display: "inline-block",
+          float: "right",
+        }}
+      >
         <div style={menuBoxStyle}>
           <button onClick={toggleMenuDropdown} style={dropdownButtonStyle}>
             Menu
@@ -164,7 +181,9 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
           onChange={handleSearchChange}
           style={inputStyle}
         />
-        <button onClick={handleSaveSearch} style={buttonStyle}>Save Search</button>
+        <button onClick={handleSaveSearch} style={buttonStyle}>
+          Save Search
+        </button>
       </div>
 
       {/* Saved Queries */}
@@ -173,83 +192,198 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
         {savedQueries.length === 0 ? (
           <p>No saved queries.</p>
         ) : (
-          <ul>
+          <ul style={{ listStyleType: "none", padding: 0 }}>
+            {" "}
+            {/* Ensure list styling */}
             {savedQueries.map((query, index) => (
               <li
                 key={index}
-                style={{ cursor: 'pointer', color: 'blue' }}
-                onClick={() => handleQueryClick(query)}
+                style={{ display: "inline-block", marginRight: "10px" }}
               >
-                {query}
+                {" "}
+                {/* Inline-block to ensure they don't take full width */}
+                <span
+                  style={{
+                    cursor: "pointer",
+                    color: "blue",
+                    textDecoration: "underline",
+                  }}
+                  onClick={() => handleQueryClick(query)}
+                >
+                  {query}
+                </span>
               </li>
             ))}
           </ul>
         )}
-        <button onClick={handleClearQueries} style={buttonStyle}>Clear Saved Queries</button>
+        <button onClick={handleClearQueries} style={buttonStyle}>
+          Clear Saved Queries
+        </button>
       </div>
 
       {/* Column Visibility Dropdown */}
-      <div style={{ position: "relative", display: "inline-block", marginBottom: "20px" }}>
+      <div
+        style={{
+          position: "relative",
+          display: "inline-block",
+          marginBottom: "20px",
+          float: "right",
+        }}
+      >
         <button onClick={toggleColumnDropdown} style={dropdownButtonStyle}>
           Hide/Show Columns
         </button>
         {isColumnDropdownOpen && (
           <div style={dropdownStyleColumns}>
             <div style={checkboxContainerStyle}>
-              <input type="checkbox" checked={visibleColumns.title} onChange={() => handleCheckboxChange('title')} style={checkboxStyle} />
               <label>Title</label>
+              <input
+                type="checkbox"
+                checked={visibleColumns.title}
+                onChange={() => handleCheckboxChange("title")}
+                style={checkboxStyle}
+              />
             </div>
             <div style={checkboxContainerStyle}>
-              <input type="checkbox" checked={visibleColumns.author} onChange={() => handleCheckboxChange('author')} style={checkboxStyle} />
               <label>Author</label>
+              <input
+                type="checkbox"
+                checked={visibleColumns.author}
+                onChange={() => handleCheckboxChange("author")}
+                style={checkboxStyle}
+              />
             </div>
             <div style={checkboxContainerStyle}>
-              <input type="checkbox" checked={visibleColumns.isbn} onChange={() => handleCheckboxChange('isbn')} style={checkboxStyle} />
               <label>ISBN</label>
+              <input
+                type="checkbox"
+                checked={visibleColumns.isbn}
+                onChange={() => handleCheckboxChange("isbn")}
+                style={checkboxStyle}
+              />
             </div>
             <div style={checkboxContainerStyle}>
-              <input type="checkbox" checked={visibleColumns.description} onChange={() => handleCheckboxChange('description')} style={checkboxStyle} />
               <label>Description</label>
+              <input
+                type="checkbox"
+                checked={visibleColumns.description}
+                onChange={() => handleCheckboxChange("description")}
+                style={checkboxStyle}
+              />
             </div>
             <div style={checkboxContainerStyle}>
-              <input type="checkbox" checked={visibleColumns.published_date} onChange={() => handleCheckboxChange('published_date')} style={checkboxStyle} />
-              <label>Published Date</label>
+              <label>Journal Year</label>
+              <input
+                type="checkbox"
+                checked={visibleColumns.published_date}
+                onChange={() => handleCheckboxChange("published_date")}
+                style={checkboxStyle}
+              />
             </div>
             <div style={checkboxContainerStyle}>
-              <input type="checkbox" checked={visibleColumns.rating} onChange={() => handleCheckboxChange('rating')} style={checkboxStyle} />
               <label>Rating</label>
+              <input
+                type="checkbox"
+                checked={visibleColumns.rating}
+                onChange={() => handleCheckboxChange("rating")}
+                style={checkboxStyle}
+              />
             </div>
           </div>
         )}
       </div>
 
       {/* Table */}
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+      <table
+        style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}
+      >
         <thead>
           <tr>
-            {visibleColumns.title && <th>Title <button onClick={() => setSortField("title")} style={sortButtonStyle}>Sort {getSortArrow("title")}</button></th>}
-            {visibleColumns.author && <th>Author <button onClick={() => setSortField("author")} style={sortButtonStyle}>Sort {getSortArrow("author")}</button></th>}
-            {visibleColumns.isbn && <th>ISBN <button onClick={() => setSortField("isbn")} style={sortButtonStyle}>Sort {getSortArrow("isbn")}</button></th>}
-            {visibleColumns.description && <th>Description <button onClick={() => setSortField("description")} style={sortButtonStyle}>Sort {getSortArrow("description")}</button></th>}
-            {visibleColumns.published_date && <th>Published Date <button onClick={() => setSortField("published_date")} style={sortButtonStyle}>Sort {getSortArrow("published_date")}</button></th>}
-            {visibleColumns.rating && <th>Rating <button onClick={() => setSortField("ratings")} style={sortButtonStyle}>Sort {getSortArrow("ratings")}</button></th>}
+            {visibleColumns.title && (
+              <th>
+                Title{" "}
+                <button
+                  onClick={() => handleSortFieldChange("title")}
+                  style={sortButtonStyle}
+                >
+                  Sort {getSortArrow("title")}
+                </button>
+              </th>
+            )}
+            {visibleColumns.author && (
+              <th>
+                Author{" "}
+                <button
+                  onClick={() => handleSortFieldChange("author")}
+                  style={sortButtonStyle}
+                >
+                  Sort {getSortArrow("author")}
+                </button>
+              </th>
+            )}
+            {visibleColumns.isbn && (
+              <th>
+                ISBN{" "}
+                <button
+                  onClick={() => handleSortFieldChange("isbn")}
+                  style={sortButtonStyle}
+                >
+                  Sort {getSortArrow("isbn")}
+                </button>
+              </th>
+            )}
+            {visibleColumns.description && (
+              <th>
+                Description{" "}
+                <button
+                  onClick={() => handleSortFieldChange("description")}
+                  style={sortButtonStyle}
+                >
+                  Sort {getSortArrow("description")}
+                </button>
+              </th>
+            )}
+            {visibleColumns.published_date && (
+              <th>
+                Journal Year{" "}
+                <button
+                  onClick={() => handleSortFieldChange("published_date")}
+                  style={sortButtonStyle}
+                >
+                  Sort {getSortArrow("published_date")}
+                </button>
+              </th>
+            )}
+            {visibleColumns.rating && (
+              <th>
+                Rating{" "}
+                <button
+                  onClick={() => handleSortFieldChange("ratings")}
+                  style={sortButtonStyle}
+                >
+                  Sort {getSortArrow("ratings")}
+                </button>
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
-          {filteredArticles.map(article => (
+          {filteredArticles.map((article) => (
             <tr key={article._id}>
               {visibleColumns.title && <td>{article.title}</td>}
               {visibleColumns.author && <td>{article.author}</td>}
               {visibleColumns.isbn && <td>{article.isbn}</td>}
               {visibleColumns.description && <td>{article.description}</td>}
-              {visibleColumns.published_date && <td>{new Date(article.published_date).toLocaleDateString('en-GB')}</td>}
+              {visibleColumns.published_date && (
+                <td>{article.published_date.slice(0, 4)}</td>
+              )}
               {visibleColumns.rating && (
                 <td>
-                  <Rating 
-                    count={5} 
-                    value={getAverageRating(article.ratings)} 
+                  <Rating
+                    count={5}
+                    value={getAverageRating(article.ratings)}
                     size={24}
-                    edit={false}  // Disable editing on the index page
+                    edit={false}
                     activeColor="#ffd700"
                   />
                 </td>
@@ -258,9 +392,9 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
           ))}
         </tbody>
       </table>
-
       <style jsx>{`
-        th, td {
+        th,
+        td {
           border: 1px solid #ddd;
           padding: 8px;
           text-align: left;
@@ -280,7 +414,9 @@ export const getServerSideProps = async () => {
   let articles = [];
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books`
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch articles");
     }
@@ -339,12 +475,12 @@ const menuBoxStyle: React.CSSProperties = {
 };
 
 const sortButtonStyle: React.CSSProperties = {
-  marginLeft: '10px',
-  backgroundColor: '#2e7d32',
-  border: 'none',
-  cursor: 'pointer',
-  padding: '5px',
-  color: 'white',
+  marginLeft: "10px",
+  backgroundColor: "#2e7d32",
+  border: "none",
+  cursor: "pointer",
+  padding: "5px",
+  color: "white",
 };
 
 const containerStyle: React.CSSProperties = {
@@ -379,7 +515,8 @@ const checkboxContainerStyle: React.CSSProperties = {
 };
 
 const checkboxStyle: React.CSSProperties = {
-  marginRight: "10px",
+  alignItems: "center",
+  float: "right",
 };
 
 export default Home;
