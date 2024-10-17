@@ -17,11 +17,11 @@ interface HomeProps {
 }
 
 const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
-  const [articles, setArticles] = useState(initialArticles);
+  const [articles] = useState(initialArticles);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>(initialArticles);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [savedQueries, setSavedQueries] = useState<string[]>([]);
-  const [sortField, setSortField] = useState<keyof Article | null>(null);
+  const [sortField] = useState<keyof Article | null>(null);
   const [isAscending, setIsAscending] = useState(true);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isColumnDropdownOpen, setColumnDropdownOpen] = useState(false);
