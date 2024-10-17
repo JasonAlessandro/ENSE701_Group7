@@ -199,7 +199,40 @@ const Moderation: FC = () => {
           </table>
         )}
 
-        
+        {/* Rejected Articles Table */}
+        <h2 style={{ textAlign: "center", marginTop: "30px" }}>Rejected Articles</h2>
+        {rejectedBooks.length === 0 ? (
+          <p>No articles have been rejected yet.</p>
+        ) : (
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              marginTop: "20px",
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Title</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Author</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>ISBN</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Description</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Journal Year</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rejectedBooks.map((book) => (
+                <tr key={book._id}>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.title}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.author}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.isbn}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.description}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.published_date.toString().slice(0, 4)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

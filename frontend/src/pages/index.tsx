@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { loadEnvFile } from "process";
 import { FC, useState, useEffect, useCallback } from "react";
 import Rating from "react-rating-stars-component";
 
