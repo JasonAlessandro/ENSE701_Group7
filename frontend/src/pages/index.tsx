@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useCallback } from "react";
 import Rating from 'react-rating-stars-component'; // For displaying stars
 
 interface Article {
@@ -17,11 +17,11 @@ interface HomeProps {
 }
 
 const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
-  const [articles, setArticles] = useState(initialArticles);
+  const [articles] = useState(initialArticles);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>(initialArticles);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [savedQueries, setSavedQueries] = useState<string[]>([]);
-  const [sortField, setSortField] = useState<keyof Article | null>(null);
+  const [sortField] = useState<keyof Article | null>(null);
   const [isAscending, setIsAscending] = useState(true);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isColumnDropdownOpen, setColumnDropdownOpen] = useState(false);
@@ -43,8 +43,8 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
 
   useEffect(() => {
     setIsAscending(true);
-    sortArticles("published_date");
-  }, []);
+    sortArticles();
+  }, [articles]); // Added articles to dependency array
 
   const handleCheckboxChange = (column: keyof typeof visibleColumns) => {
     setVisibleColumns({ ...visibleColumns, [column]: !visibleColumns[column] });
@@ -58,25 +58,18 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
     setColumnDropdownOpen(!isColumnDropdownOpen);
   };
 
-  const sortArticles = (field: keyof Article) => {
-    const isSameField = sortField === field;
-    
-    if (!isSameField) {
-      setIsAscending(true); // If it's a new field, always start with ascending
-    } else {
-      setIsAscending(!isAscending); // Otherwise, toggle the sorting direction
-    }
-    
-    setSortField(field);
+  const sortArticles = useCallback(() => {
+    const isSameField = sortField === sortField;
+    setIsAscending(!isSameField ? true : !isAscending);
 
     let sortedArticles;
-    if (field === 'published_date') {
+    if (sortField === 'published_date') {
       sortedArticles = [...filteredArticles].sort((a, b) => {
         const dateA = new Date(a.published_date).getTime();
         const dateB = new Date(b.published_date).getTime();
         return isAscending ? dateA - dateB : dateB - dateA;
       });
-    } else if (field === 'ratings') {
+    } else if (sortField === 'ratings') {
       sortedArticles = [...filteredArticles].sort((a, b) => {
         const avgRatingA = getAverageRating(a.ratings);
         const avgRatingB = getAverageRating(b.ratings);
@@ -84,8 +77,8 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
       });
     } else {
       sortedArticles = [...filteredArticles].sort((a, b) => {
-        const valueA = a[field].toString().toLowerCase();
-        const valueB = b[field].toString().toLowerCase();
+        const valueA = a[sortField!].toString().toLowerCase();
+        const valueB = b[sortField!].toString().toLowerCase();
         return isAscending
           ? valueA.localeCompare(valueB)
           : valueB.localeCompare(valueA);
@@ -93,7 +86,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
     }
 
     setFilteredArticles(sortedArticles);
-  };
+  }, [filteredArticles, sortField, isAscending]);
 
   const getSortArrow = (field: keyof Article) => {
     if (sortField === field) {
@@ -215,7 +208,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
             </div>
             <div style={checkboxContainerStyle}>
               <input type="checkbox" checked={visibleColumns.isbn} onChange={() => handleCheckboxChange('isbn')} style={checkboxStyle} />
-              <label>DOI</label>
+              <label>ISBN</label>
             </div>
             <div style={checkboxContainerStyle}>
               <input type="checkbox" checked={visibleColumns.description} onChange={() => handleCheckboxChange('description')} style={checkboxStyle} />
@@ -237,12 +230,12 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
       <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
         <thead>
           <tr>
-            {visibleColumns.title && <th>Title <button onClick={() => sortArticles("title")} style={sortButtonStyle}>Sort {getSortArrow("title")}</button></th>}
-            {visibleColumns.author && <th>Author <button onClick={() => sortArticles("author")} style={sortButtonStyle}>Sort {getSortArrow("author")}</button></th>}
-            {visibleColumns.isbn && <th>DOI <button onClick={() => sortArticles("isbn")} style={sortButtonStyle}>Sort {getSortArrow("isbn")}</button></th>}
-            {visibleColumns.description && <th>Description <button onClick={() => sortArticles("description")} style={sortButtonStyle}>Sort {getSortArrow("description")}</button></th>}
-            {visibleColumns.published_date && <th>Published Date <button onClick={() => sortArticles("published_date")} style={sortButtonStyle}>Sort {getSortArrow("published_date")}</button></th>}
-            {visibleColumns.rating && <th>Rating <button onClick={() => sortArticles("ratings")} style={sortButtonStyle}>Sort {getSortArrow("ratings")}</button></th>}
+            {visibleColumns.title && <th>Title <button onClick={() => sortArticles()} style={sortButtonStyle}>Sort {getSortArrow("title")}</button></th>}
+            {visibleColumns.author && <th>Author <button onClick={() => sortArticles()} style={sortButtonStyle}>Sort {getSortArrow("author")}</button></th>}
+            {visibleColumns.isbn && <th>ISBN <button onClick={() => sortArticles()} style={sortButtonStyle}>Sort {getSortArrow("isbn")}</button></th>}
+            {visibleColumns.description && <th>Description <button onClick={() => sortArticles()} style={sortButtonStyle}>Sort {getSortArrow("description")}</button></th>}
+            {visibleColumns.published_date && <th>Published Date <button onClick={() => sortArticles()} style={sortButtonStyle}>Sort {getSortArrow("published_date")}</button></th>}
+            {visibleColumns.rating && <th>Rating <button onClick={() => sortArticles()} style={sortButtonStyle}>Sort {getSortArrow("ratings")}</button></th>}
           </tr>
         </thead>
         <tbody>
