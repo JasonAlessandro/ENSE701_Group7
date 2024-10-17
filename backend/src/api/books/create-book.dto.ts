@@ -3,7 +3,7 @@ export class CreateBookDto {
     isbn: string;
     author: string;
     description: string;
-    published_date: Date;
+    published_date: string;
     ratings?: number[]; 
     moderation?: 'pending' | 'accepted' | 'rejected';
 }
