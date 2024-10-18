@@ -9,11 +9,12 @@ interface Book {
   author: string;
   description: string;
   published_date: number;
-  moderation: string;
+  moderation: 'pending' | 'accepted' | 'rejected';
 }
 
 const Moderation: FC = () => {
   const [pendingBooks, setPendingBooks] = useState<Book[]>([]);
+  const [acceptedBooks, setAcceptedBooks] = useState<Book[]>([]);
   const { addNotification } = useNotification();
 
   const fetchPendingBooks = useCallback(async () => {
@@ -32,9 +33,26 @@ const Moderation: FC = () => {
     }
   }, [addNotification]);
 
+  const fetchAcceptedBooks = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books?moderation=accepted`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch accepted Articles");
+      }
+      const data = await response.json();
+      setAcceptedBooks(data);
+    } catch (error) {
+      console.error("Error fetching accepted Articles:", error);
+      addNotification("Error fetching accepted Articles. Please try again.");
+    }
+  }, [addNotification]);
+
   useEffect(() => {
     fetchPendingBooks();
-  }, [fetchPendingBooks]);
+    fetchAcceptedBooks();
+  }, [fetchPendingBooks, fetchAcceptedBooks]);
 
   const handleAccept = async (id: string) => {
     try {
@@ -50,6 +68,7 @@ const Moderation: FC = () => {
       }
 
       fetchPendingBooks();
+      fetchAcceptedBooks();
       addNotification("Article accepted successfully!");
     } catch (error) {
       console.error("Error accepting Articles:", error);
@@ -59,12 +78,9 @@ const Moderation: FC = () => {
 
   const handleReject = async (id: string) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${id}/reject`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books/${id}/reject`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to reject the Articles");
@@ -79,8 +95,8 @@ const Moderation: FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
-      <div style={{ width: '80%', maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ padding: "20px", display: "flex", justifyContent: "center" }}>
+      <div style={{ width: "80%", maxWidth: "1200px", margin: "0 auto" }}>
         <h1 style={{ textAlign: "center" }}>Moderation Panel</h1>
         <div style={{ marginBottom: "20px" }}>
           <Link href="/">
@@ -99,25 +115,113 @@ const Moderation: FC = () => {
           >
             <thead>
               <tr>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Title</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Author</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>ISBN</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Description</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Journal Year</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Actions</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Title
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Author
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  DOI
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Description
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Journal Year
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {pendingBooks.map((book) => (
                 <tr key={book._id}>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.title}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.author}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.isbn}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.description}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.published_date.toString().slice(0, 4)}</td>
                   <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    <button style={{ marginRight: '10px' }} onClick={() => handleAccept(book._id)}>Accept</button>
-                    <button style={{ backgroundColor: 'red', color: 'white' }} onClick={() => handleReject(book._id)}>Reject</button>
+                    {book.title}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.author}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.isbn}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.description}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.published_date.toString().slice(0, 4)}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    <button
+                      style={{ marginRight: "10px" }}
+                      onClick={() => handleAccept(book._id)}
+                    >
+                      Accept
+                    </button>
+                    <button
+                      style={{ backgroundColor: "red", color: "white" }}
+                      onClick={() => handleReject(book._id)}
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {/* Accepted Articles Table */}
+        <h2 style={{ textAlign: "center", marginTop: "30px" }}>
+          Accepted Articles
+        </h2>
+        {acceptedBooks.length === 0 ? (
+          <p>No articles have been accepted yet.</p>
+        ) : (
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              marginTop: "20px",
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Title
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Author
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  DOI
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Description
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Journal Year
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {acceptedBooks.map((book) => (
+                <tr key={book._id}>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.title}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.author}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.isbn}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.description}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.published_date.toString().slice(0, 4)}
                   </td>
                 </tr>
               ))}
