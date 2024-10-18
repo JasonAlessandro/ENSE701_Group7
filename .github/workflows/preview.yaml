@@ -9,7 +9,7 @@ on:
  workflow_dispatch:
 jobs:
  Test:
-  uses: JasonAlessandro/ENSE701_Group7/.github/workflows/test.yml@develop
+  uses: JasonAlessandro/ENSE701_Group7/.github/workflows/test.yaml@develop
 
 
 Deploy-Preview:
