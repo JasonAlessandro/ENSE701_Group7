@@ -6,7 +6,7 @@ async function bootstrap() {
   const port = process.env.PORT || 8082;
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: 'https://ense-701-group7.vercel.app',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

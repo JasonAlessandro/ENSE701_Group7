@@ -125,7 +125,6 @@ const Moderation: FC = () => {
             <button>Back to Home</button>
           </Link>
         </div>
-
         {pendingBooks.length === 0 ? (
           <p>No books pending moderation.</p>
         ) : (
@@ -138,34 +137,67 @@ const Moderation: FC = () => {
           >
             <thead>
               <tr>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Title</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Author</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>ISBN</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Description</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Journal Year</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Actions</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Title
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Author
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  DOI
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Description
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Journal Year
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {pendingBooks.map((book) => (
                 <tr key={book._id}>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.title}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.author}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.isbn}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.description}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.published_date.toString().slice(0, 4)}</td>
                   <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    <button style={{ marginRight: '10px' }} onClick={() => handleAccept(book._id)}>Accept</button>
-                    <button style={{ backgroundColor: 'red', color: 'white' }} onClick={() => handleReject(book._id)}>Reject</button>
+                    {book.title}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.author}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.isbn}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.description}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.published_date.toString().slice(0, 4)}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    <button
+                      style={{ marginRight: "10px" }}
+                      onClick={() => handleAccept(book._id)}
+                    >
+                      Accept
+                    </button>
+                    <button
+                      style={{ backgroundColor: "red", color: "white" }}
+                      onClick={() => handleReject(book._id)}
+                    >
+                      Reject
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-
         {/* Accepted Articles Table */}
-        <h2 style={{ textAlign: "center", marginTop: "30px" }}>Accepted Articles</h2>
+        <h2 style={{ textAlign: "center", marginTop: "30px" }}>
+          Accepted Articles
+        </h2>
         {acceptedBooks.length === 0 ? (
           <p>No articles have been accepted yet.</p>
         ) : (
@@ -178,29 +210,49 @@ const Moderation: FC = () => {
           >
             <thead>
               <tr>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Title</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Author</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>ISBN</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Description</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Journal Year</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Title
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Author
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  DOI
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Description
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Journal Year
+                </th>
               </tr>
             </thead>
             <tbody>
               {acceptedBooks.map((book) => (
                 <tr key={book._id}>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.title}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.author}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.isbn}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.description}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.published_date.toString().slice(0, 4)}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.title}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.author}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.isbn}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.description}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.published_date.toString().slice(0, 4)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-
-        {/* Rejected Articles Table */}
-        <h2 style={{ textAlign: "center", marginTop: "30px" }}>Rejected Articles</h2>
+        <h2 style={{ textAlign: "center", marginTop: "30px" }}>
+          Rejected Articles
+        </h2>
         {rejectedBooks.length === 0 ? (
           <p>No articles have been rejected yet.</p>
         ) : (
@@ -213,21 +265,41 @@ const Moderation: FC = () => {
           >
             <thead>
               <tr>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Title</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Author</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>ISBN</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Description</th>
-                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Journal Year</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Title
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Author
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  DOI
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Description
+                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  Journal Year
+                </th>
               </tr>
             </thead>
             <tbody>
               {rejectedBooks.map((book) => (
                 <tr key={book._id}>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.title}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.author}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.isbn}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.description}</td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{book.published_date.toString().slice(0, 4)}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.title}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.author}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.isbn}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.description}
+                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                    {book.published_date.toString().slice(0, 4)}
+                  </td>
                 </tr>
               ))}
             </tbody>
