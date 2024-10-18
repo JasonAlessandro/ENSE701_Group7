@@ -254,7 +254,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
               />
             </div>
             <div style={checkboxContainerStyle}>
-              <label>ISBN</label>
+              <label>DOI</label>
               <input
                 type="checkbox"
                 checked={visibleColumns.isbn}
@@ -281,7 +281,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
               />
             </div>
             <div style={checkboxContainerStyle}>
-              <label>Rating</label>
+              <label>Avg. Rating</label>
               <input
                 type="checkbox"
                 checked={visibleColumns.rating}
@@ -323,7 +323,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
             )}
             {visibleColumns.isbn && (
               <th>
-                ISBN{" "}
+                DOI{" "}
                 <button
                   onClick={() => handleSortFieldChange("isbn")}
                   style={sortButtonStyle}
@@ -356,7 +356,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
             )}
             {visibleColumns.rating && (
               <th>
-                Rating{" "}
+                Avg. Rating{" "}
                 <button
                   onClick={() => handleSortFieldChange("ratings")}
                   style={sortButtonStyle}
