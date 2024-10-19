@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 import Rating from "react-rating-stars-component";
-import { useNotification } from "../Notification"; 
+import { useNotification } from "../Notification";
 
 interface Article {
   _id: string;
@@ -18,7 +18,7 @@ const Analysis: FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [updatedArticle, setUpdatedArticle] = useState<Article | null>(null);
-  const { addNotification } = useNotification(); 
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -66,7 +66,7 @@ const Analysis: FC = () => {
           );
           setEditingArticle(null);
           setUpdatedArticle(null);
-          addNotification("Article updated successfully!"); 
+          addNotification("Article updated successfully!");
         } else {
           throw new Error("Failed to update article");
         }
@@ -98,7 +98,7 @@ const Analysis: FC = () => {
               : article
           )
         );
-        addNotification("Rating submitted successfully!"); 
+        addNotification("Rating submitted successfully!");
       } else {
         throw new Error("Failed to rate the article");
       }
@@ -117,8 +117,8 @@ const Analysis: FC = () => {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
-      <div style={{ width: "80%", maxWidth: "1500px" }}>
+    <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ width: '80%', maxWidth: '1200px', margin: '0 auto' }}>
         <h1 style={{ textAlign: "center" }}>Analysis Panel</h1>
 
         {/* Back Button */}
@@ -128,98 +128,35 @@ const Analysis: FC = () => {
           </Link>
         </div>
 
+        {/* Articles Table */}
         {articles.length === 0 ? (
           <p>No accepted articles found.</p>
         ) : (
           <table
             style={{
               width: "100%",
-              tableLayout: "fixed",
               borderCollapse: "collapse",
+              marginTop: "20px",
             }}
           >
             <thead>
               <tr>
-                <th
-                  style={{
-                    width: "30%",
-                    padding: "8px",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  Title
-                </th>
-                <th
-                  style={{
-                    width: "15%",
-                    padding: "8px",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  Author
-                </th>
-                <th
-                  style={{
-                    width: "10%",
-                    padding: "8px",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  DOI
-                </th>
-                <th
-                  style={{
-                    width: "45%",
-                    padding: "8px",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  Description
-                </th>
-                <th
-                  style={{
-                    width: "10%",
-                    padding: "8px",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  Journal Year
-                </th>
-                <th
-                  style={{
-                    width: "15%",
-                    padding: "8px",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  Rating
-                </th>
-                <th
-                  style={{
-                    width: "9%",
-                    padding: "8px",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  Edit
-                </th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Title</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Author</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>DOI</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Description</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Journal Year</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Rating</th>
+                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Edit</th>
               </tr>
             </thead>
             <tbody>
               {articles.map((article) => (
                 <tr key={article._id}>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    {article.title}
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    {article.author}
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    {article.isbn}
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    {article.description}
-                  </td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{article.title}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{article.author}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{article.isbn}</td>
+                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>{article.description}</td>
                   <td style={{ padding: "8px", border: "1px solid #ddd" }}>
                     {article.published_date.toString().slice(0, 4)}
                   </td>
@@ -240,9 +177,7 @@ const Analysis: FC = () => {
                     />
                   </td>
                   <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    <button onClick={() => handleEditClick(article)}>
-                      Edit
-                    </button>
+                    <button onClick={() => handleEditClick(article)}>Edit</button>
                   </td>
                 </tr>
               ))}
@@ -250,8 +185,9 @@ const Analysis: FC = () => {
           </table>
         )}
 
+        {/* Editing Section */}
         {editingArticle && (
-          <div>
+          <div style={{ marginTop: '30px' }}>
             <h2>Edit Article</h2>
             <input
               type="text"
@@ -274,7 +210,7 @@ const Analysis: FC = () => {
               name="isbn"
               value={updatedArticle?.isbn}
               onChange={handleInputChange}
-              placeholder="ISBN"
+              placeholder="DOI"
               style={inputStyle}
             />
             <textarea
