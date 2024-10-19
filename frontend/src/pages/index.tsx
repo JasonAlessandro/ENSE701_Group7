@@ -23,7 +23,7 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [savedQueries, setSavedQueries] = useState<string[]>([]);
   const [sortField, setSortField] = useState<keyof Article | null>(null);
-  const [isAscending, setIsAscending] = useState(true); // Update to useState here
+  const [isAscending, setIsAscending] = useState(true); 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isColumnDropdownOpen, setColumnDropdownOpen] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState({
@@ -124,10 +124,8 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
 
   const handleSortFieldChange = (field: keyof Article) => {
     if (sortField === field) {
-      // If the same field is clicked, toggle the sort direction
       setIsAscending(!isAscending);
     } else {
-      // If a new field is clicked, set that field and reset to ascending order
       setSortField(field);
       setIsAscending(true);
     }
@@ -194,14 +192,12 @@ const Home: FC<HomeProps> = ({ articles: initialArticles }) => {
         ) : (
           <ul style={{ listStyleType: "none", padding: 0 }}>
             {" "}
-            {/* Ensure list styling */}
             {savedQueries.map((query, index) => (
               <li
                 key={index}
                 style={{ display: "inline-block", marginRight: "10px" }}
               >
                 {" "}
-                {/* Inline-block to ensure they don't take full width */}
                 <span
                   style={{
                     cursor: "pointer",
