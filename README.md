@@ -77,12 +77,13 @@ NEXT_PUBLIC_BACKEND_URL=http://localhost:8082
 
 Once both `.env` files are set up, the application should function as expected.
 
+
 ## Technologies Used
 
 **Frontend**: Next.js
 
 **Backend**: NestJS
-- 
+-
 **Database**: MongoDB
 
 
