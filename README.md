@@ -19,8 +19,7 @@ The Software Practice Empirical Evidence Database (SPEED) is a web-based applica
 - Admins can manage and configure the data in SPEED.
 
 
-## Getting Started
-Follow these steps to get **PriceHound** locally on your machine.
+## Installation
 
 #### Prerequisites
 Ensure you have the following installed:
@@ -65,19 +64,25 @@ With the frontend and backend running, open your browser and navigate to: ```htt
 
 ### Backend:
 Create a `.env` file in the backend directory and add the following MongoDB connection string:
-```MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<dbname>?retryWrites=true&w=majority```
+```
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<dbname>?retryWrites=true&w=majority
+```
 Replace `<username>`, `<password>`, `<cluster-url>`, and `<dbname>` with your MongoDB connection details.
 
 ### Frontend:
 Create a `.env` file in the frontend directory and add the backend URL for API calls:
-```NEXT_PUBLIC_BACKEND_URL=http://localhost:8082```
+```
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8082
+```
 
 Once both `.env` files are set up, the application should function as expected.
 
 ## Technologies Used
 
 **Frontend**: Next.js
+
 **Backend**: NestJS
+- 
 **Database**: MongoDB
 
 
