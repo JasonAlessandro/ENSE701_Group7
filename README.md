@@ -83,7 +83,7 @@ Once both `.env` files are set up, the application should function as expected.
 **Frontend**: Next.js
 
 **Backend**: NestJS
--
+
 **Database**: MongoDB
 
 
